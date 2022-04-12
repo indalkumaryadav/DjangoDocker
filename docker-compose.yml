@@ -1,10 +1,28 @@
 version: "3.9"
 
 services:
-  web:
+  indal:
+    restart: always
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
     ports:
       - "8000:8000"
+
+  nginx:
+    restart: always
+    build: ./nginx
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    ports:
+      - "80:80"
+    depends_on:
+      - indal
+
+volumes:
+  static_volume:
+  media_volume:
